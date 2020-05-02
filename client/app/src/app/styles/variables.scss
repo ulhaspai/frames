@@ -1,0 +1,8 @@
+@import './theme.scss';
+
+$font-color: map-get($md-palette, 900);
+$border-color: #979797;
+
+* {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}

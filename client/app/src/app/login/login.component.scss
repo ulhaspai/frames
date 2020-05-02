@@ -1,0 +1,60 @@
+@import '../styles/variables.scss';
+
+form {
+    display: flex;
+    flex-direction: row;
+}
+
+img {
+    margin: 20px;
+}
+
+button {
+    margin-top: 20px;
+    margin-right: 20px;
+}
+
+span, a {
+    font-size: 16px;
+    letter-spacing: 0;
+    margin-left: 5px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.login-page {
+
+}
+
+.login-box {
+    margin: 100px;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    padding: 12px;
+    border-color: $border-color;
+    border-width: 1px;
+}
+
+.login-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.login-illustration {
+    width: 400px;
+}
+
+@media (max-width: 710px) {
+    img {
+        display: none;
+    }
+
+    h1 {
+        padding: 0;
+    }
+}

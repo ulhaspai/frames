@@ -1,0 +1,14 @@
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-content">
+      <h1>Welcome</h1>
+      <form>
+        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">LOG IN</button>
+        <button mat-raised-button color="accent" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">SIGN UP</button>
+        <button mat-raised-button color="primary" (click)="gotoDashboard()" *ngIf="auth.loggedIn">GO TO DASHBOARD</button>
+
+      </form>
+    </div>
+    <img class="login-illustration" src="../../assets/login-illustration.svg"/>
+  </div>
+</div>
