@@ -10,7 +10,17 @@ Requirements to run this project are as follows:
 
 ### Running the application
 
-Configure the Auth0 application parameters in the [login.config.ts](src/app/login/login.config.ts) file.
+#### Auth0 config
+Before running the application you will need to configure the application for Auth0. Provide the configuration
+to the [login.config.ts](src/app/login/login.config.ts) file through a gitignored file by the name _temp.auth0.config.ts_ 
+in the same folder. Create a file with that name and add the following to that file.
+
+```$typescript
+export const localAuth0Config = {
+  domain: "AUTH0_APP_DOMAIN_NAME",
+  client_id: "AUTH0_APP_CLIENT_ID"
+}
+```
 
 
 ## Development server
