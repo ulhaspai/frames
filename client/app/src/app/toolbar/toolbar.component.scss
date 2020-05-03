@@ -1,0 +1,40 @@
+@import '../styles/variables';
+
+.app-toolbar {
+    margin-bottom: 200px
+}
+
+.logo {
+    position: absolute;
+    //clip: rect(0, 128px, 128px, 0);
+    height: 10%;
+}
+
+.toolbar {
+    display: flex ;
+    flex-direction: row;
+    width: 100%;
+
+    .toolbar-left {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: row;
+        border: 1px solid red;
+    }
+
+    .toolbar-left mat-icon {
+        vertical-align: text-bottom;
+    }
+
+    .toolbar-right {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: row-reverse;
+        border: 1px solid red;
+    }
+
+    .toolbar-right mat-icon {
+        vertical-align: text-bottom;
+    }
+
+}
