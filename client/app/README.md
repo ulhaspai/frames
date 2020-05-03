@@ -1,7 +1,5 @@
-# App
-
+## App
 This is the client UI application for the _frames_ application. 
-
 
 ### Requirements 
 Requirements to run this project are as follows:
@@ -15,7 +13,7 @@ Before running the application you will need to configure the application for Au
 to the [login.config.ts](src/app/login/login.config.ts) file through a gitignored file by the name _temp.auth0.config.ts_ 
 in the same folder. Create a file with that name and add the following to that file.
 
-```$typescript
+```typescript
 export const localAuth0Config = {
   domain: "AUTH0_APP_DOMAIN_NAME",
   client_id: "AUTH0_APP_CLIENT_ID"
