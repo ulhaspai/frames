@@ -50,6 +50,7 @@ provider:
 
   environment:
     USER_TABLE: users-${self:provider.stage}
+    USER_EMAIL_INDEX_NAME: users-email-index-${self:provider.stage}
     JWKS_URL: https://uptodolist.auth0.com/.well-known/jwks.json
 
   iamRoleStatements:
@@ -106,8 +107,17 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
+          - AttributeName: email
+            AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.USER_TABLE}
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.USER_EMAIL_INDEX_NAME}
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL

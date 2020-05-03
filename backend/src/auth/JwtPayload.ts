@@ -23,4 +23,9 @@ export interface JwtPayload {
    * the numeric date and time for the token expiry time
    */
   exp: number
+
+  /**
+   * the email address of the user
+   */
+  email: string
 }

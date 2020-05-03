@@ -21,14 +21,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // grab the user id from the JWT payload
     const userId: string = LambdaUtils.getUserId(event)
+    const userEmail: string = LambdaUtils.getUserEmail(event)
     logger.info("userId = ", userId)
+    logger.info("userEmail = ", userEmail)
 
     // get current user
     let currentUser = await UserManager.getUser(userId)
     if (!currentUser) {
         const newUser: User = {
             userId: userId,
-            name: '',
+            email: userEmail,
             ctime: new Date().toISOString()
         }
         logger.info("creating new user = ", newUser)

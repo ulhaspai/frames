@@ -47,6 +47,7 @@ export class FramesDocumentClient implements IFramesDataAccess {
         return {
             userId: dbItem.userId,
             name: dbItem.name,
+            email: dbItem.email,
             ctime: dbItem.ctime
         }
     }

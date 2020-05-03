@@ -50,7 +50,7 @@ export class JwtClient {
     }
 
     /**
-     * given an authorization header, find the JWT token from the header and decodes the header into a
+     * given an authorization header, finds the JWT token from the header and decodes the header into a
      * decoded {@link Jwt} object and returns the userId for the user (sub) from the {@link Jwt} object
      *
      * <pre>
@@ -63,6 +63,22 @@ export class JwtClient {
     static decodeAuthHeaderUserId(authHeader: string): string {
         const jwt: Jwt = JwtClient.decodeAuthHeader(authHeader)
         return jwt.payload.sub
+    }
+
+    /**
+     * given an authorization header, finds the JWT token from the header and decodes the header into a
+     * decoded {@link Jwt} object and returns the email for the user (email) from the {@link Jwt} object
+     *
+     * <pre>
+     * e.g. authorization header
+     *     Bearer sdibiwuevnkdjbvoernodvn
+     * </pre>
+     *
+     * @param authHeader the authorization header to be decoded
+     */
+    static decodeAuthHeaderUserEmail(authHeader: string): string {
+        const jwt: Jwt = JwtClient.decodeAuthHeader(authHeader)
+        return jwt.payload.email
     }
 
 }
