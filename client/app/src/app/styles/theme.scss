@@ -28,8 +28,8 @@ $md-palette: (
     )
 );
 
-$app-primary: mat-palette($md-palette, 900, 900, 900);
-$app-accent: mat-palette($md-palette, 700, 700, 700);
+$app-primary: mat-palette($md-palette, 900, 900, 900, 50);
+$app-accent: mat-palette($md-palette, 700, 700, 700, 50);
 
 // The warn palette is optional (defaults to red).
 $app-warn: mat-palette($mat-red);

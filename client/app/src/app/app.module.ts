@@ -16,13 +16,16 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { PeopleListComponent } from './people-list/people-list.component';
+import { MatListModule } from "@angular/material/list";
 
 @NgModule({
     declarations: [
         AppComponent,
         LoginComponent,
         DashboardComponent,
-        ToolbarComponent
+        ToolbarComponent,
+        PeopleListComponent
     ],
     imports: [
         BrowserModule,
@@ -38,7 +41,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         OverlayModule,
         MatTooltipModule,
         MatTooltipModule,
-
+        MatListModule,
 
     ],
     providers: [],
