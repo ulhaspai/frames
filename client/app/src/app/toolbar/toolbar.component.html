@@ -10,9 +10,16 @@
 
       <!-- toolbar right -->
       <div class="toolbar-right">
-        <span><mat-icon class="material-icons" aria-hidden="false">account_circle</mat-icon></span>
+        <span *ngIf="auth.loggedIn">
+          <span *ngIf="user$ | async as user" class="user-email">{{user.email }}</span>
+          <mat-icon class="material-icons logout"
+                    matTooltip="Logout"
+                    aria-hidden="false"(click)="auth.logout()">exit_to_app</mat-icon>
+        </span>
       </div>
 
     </div>
   </mat-toolbar-row>
 </mat-toolbar>
+
+

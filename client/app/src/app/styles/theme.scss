@@ -1,9 +1,11 @@
 @import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
 @import 'node_modules/@angular/material/theming';
+@import '~@angular/cdk/overlay-prebuilt.css';
 
 @include mat-core();
 
 $md-palette: (
+    50: #ffffff,
     100: #f8f3eb,
     200: #40bad5,
     300: #035aa6,
@@ -12,6 +14,7 @@ $md-palette: (
     600: #ff690e,
     700: #0b7b99,
     800: #212a30,
+    900: #222E37,
     contrast: (
         100: #212121,
         200: #fafafa,
@@ -21,10 +24,11 @@ $md-palette: (
         600: #fafafa,
         700: #fafafa,
         800: #fafafa,
+        900: #fafafa,
     )
 );
 
-$app-primary: mat-palette($md-palette, 600, 600, 600);
+$app-primary: mat-palette($md-palette, 900, 900, 900);
 $app-accent: mat-palette($md-palette, 700, 700, 700);
 
 // The warn palette is optional (defaults to red).
@@ -38,7 +42,7 @@ $app-theme: mat-light-theme(
 );
 
 
-$app-background: map-get($md-palette, 100);
+$app-background: map-get($md-palette, 50);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component

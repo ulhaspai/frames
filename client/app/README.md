@@ -19,7 +19,14 @@ export const localAuth0Config = {
   client_id: "AUTH0_APP_CLIENT_ID"
 }
 ```
+#### AWS config
+Once you deploy the backend to AWS using the serverless framework, AWS will generate an API
+endpoint for each API you have created. All of them will share the same API ID. Add this API
+ID to a temp file _temp.api.endpoint.config.ts_ under /src/app/api folder.
 
+```typescript
+export const API_ENDPOINT = 'API-ID-HERE'
+```
 
 ## Development server
 

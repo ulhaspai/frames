@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../login/auth.service";
+import { concatMap, map } from "rxjs/operators";
+import { UserApi } from '../api/user-api';
 
 @Component({
     selector: 'app-dashboard',
@@ -12,14 +14,14 @@ export class DashboardComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
+        this.getCurrentUser()
     }
 
-    printUser(): void {
-        this.auth.getUser().subscribe(user => {
-            console.log("User: ", user);
-            console.log("User email: ", user.email);
-            console.log("User token: ", user.token);
-        });
+    getCurrentUser(): void {
+        this.auth.getUser().pipe(
+            map(user => user.token)
+        ).pipe(
+            concatMap(token => UserApi.getCurrentUser(token))
+        ).subscribe()
     }
 }

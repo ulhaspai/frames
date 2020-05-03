@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../login/auth.service";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { concatMap, map } from "rxjs/operators";
+import { User } from "../models/user";
+import { UserApi } from "../api/user-api";
 
 @Component({
     selector: 'app-toolbar',
@@ -10,15 +12,21 @@ import { map } from "rxjs/operators";
 })
 export class ToolbarComponent implements OnInit {
 
+    user$ : Observable<User>;
+
     constructor(public auth: AuthService) {
     }
 
     ngOnInit(): void {
+        this.user$ = this.auth.getUser().pipe(
+            map(user => {
+                console.log("toolbar user: ", user)
+                return user.token
+            })
+        ).pipe(
+            concatMap(token => UserApi.getCurrentUser(token))
+        )
     }
 
-    getUserEmail(): Observable<string> {
-        return this.auth.getUser().pipe(
-            map(user => user ? user.email : '')
-        );
-    }
+
 }
