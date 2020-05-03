@@ -97,10 +97,35 @@ functions:
         Resource:
           - '*'
 
+  # Elastic search sync
+  UserElasticSearchSync:
+    environment:
+      # since ES is a managed resource, we need the domain from the resource
+      ES_ENDPOINT: !GetAtt UserSearchElasticsearchStream.DomainEndpoint
+    handler: src/lambda/dynamodb/userElasticSearchSync.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt UsersTable.StreamArn
+          documentation:
+            summary: Elastic Search sync for user table
+            description: Syncs the user table to an elastic search stream using dynamodb streams
+    iamRoleStatements:
+      # enabling tracing
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+          - xray:GetSamplingRules
+          - xray:GetSamplingTargets
+          - xray:GetSamplingStatisticSummaries
+        Resource:
+          - '*'
+
 resources:
   Resources:
 
-    # Dynamodb table for storing to-do items
+    # Dynamodb table for storing users
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -113,6 +138,8 @@ resources:
           - AttributeName: userId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.USER_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.USER_EMAIL_INDEX_NAME}
@@ -121,3 +148,28 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+
+    # Elasticsearch cluster for storing users to enable searching
+    UserSearchElasticsearchStream:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        ElasticsearchVersion: '6.3'
+        DomainName: user-search-${self:provider.stage}
+        ElasticsearchClusterConfig:
+          DedicatedMasterEnabled: false
+          InstanceCount: '1'
+          ZoneAwarenessEnabled: false
+          InstanceType: t2.small.elasticsearch
+        EBSOptions:
+          EBSEnabled: true
+          Iops: 0
+          VolumeSize: 10
+          VolumeType: 'gp2'
+        AccessPolicies:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: '*'
