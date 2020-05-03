@@ -1,0 +1,113 @@
+service:
+  name: serverless-frames
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-aws-documentation
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+
+  # configuration for running the an the serverless application offline
+  serverless-offline:
+    port: 3003
+
+  # configuration for running a dynamodb emulator
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    stages:
+      - dev
+
+  documentation:
+    api:
+      info:
+        version: v1.0.0
+        title: frames application
+        description: Serverless application for framees
+#    models:
+#      - name: CreateTodoRequest
+#        contentType: application/json
+#        schema: ${file(models/create-todo-request.json)}
+#      - name: UpdateTodoRequest
+#        contentType: application/json
+#        schema: ${file(models/update-todo-request.json)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+
+  tracing:
+    lambda: true
+    apiGateway: true
+
+  environment:
+    USER_TABLE: users-${self:provider.stage}
+    JWKS_URL: https://uptodolist.auth0.com/.well-known/jwks.json
+
+  iamRoleStatements:
+    # enabling codeploy across everything
+    - Effect: Allow
+      Action:
+        - codedeploy:*
+      Resource:
+        - '*'
+
+
+functions:
+
+  # Authorizer lambda function
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
+
+  # Get To-dos lambda function
+  GetCurrentUser:
+    handler: src/lambda/http/getCurrentUser.handler
+    events:
+      - http:
+          method: get
+          path: current-user
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Get current user information
+            description: Gets the user information for the current logged in user
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}
+      # enabling tracing
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+          - xray:GetSamplingRules
+          - xray:GetSamplingTargets
+          - xray:GetSamplingStatisticSummaries
+        Resource:
+          - '*'
+
+resources:
+  Resources:
+
+    # Dynamodb table for storing to-do items
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.USER_TABLE}
