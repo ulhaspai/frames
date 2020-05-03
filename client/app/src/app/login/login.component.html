@@ -3,9 +3,9 @@
     <div class="login-content">
       <h1>Welcome</h1>
       <form>
-        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">LOG IN</button>
-        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">SIGN UP</button>
-        <button mat-raised-button color="primary" (click)="gotoDashboard()" *ngIf="auth.loggedIn">GO TO DASHBOARD</button>
+        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Login</button>
+        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Signup</button>
+        <button mat-raised-button color="primary" (click)="gotoDashboard()" *ngIf="auth.loggedIn">Go to dashboard</button>
 
       </form>
     </div>

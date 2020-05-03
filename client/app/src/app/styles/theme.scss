@@ -8,17 +8,23 @@ $md-palette: (
     300: #035aa6,
     400: #120136,
     500: #fcbf1e,
+    600: #ff690e,
+    700: #0b7b99,
+    800: #212a30,
     contrast: (
         100: #212121,
         200: #fafafa,
         300: #fafafa,
         400: #fafafa,
         500: #fafafa,
+        600: #fafafa,
+        700: #fafafa,
+        800: #fafafa,
     )
 );
 
-$app-primary: mat-palette($md-palette, 300, 200, 400);
-$app-accent: mat-palette($md-palette, 500, 500, 500);
+$app-primary: mat-palette($md-palette, 600, 600, 600);
+$app-accent: mat-palette($md-palette, 700, 700, 700);
 
 // The warn palette is optional (defaults to red).
 $app-warn: mat-palette($mat-red);

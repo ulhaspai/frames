@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from "@angular/router";
 import { BehaviorSubject, combineLatest, from, Observable, of, throwError } from "rxjs";
-import { catchError, concatMap, shareReplay, tap } from "rxjs/operators";
-import createAuth0Client, { Auth0Client } from "@auth0/auth0-spa-js";
+import { catchError, concatMap, map, shareReplay, tap } from "rxjs/operators";
+import createAuth0Client, { Auth0Client, GetIdTokenClaimsOptions } from "@auth0/auth0-spa-js";
 import { authConfig } from "./login.config";
+import { Auth0User } from "../models/auth-user";
 
 /**
  * Auth Service for Auth0
@@ -22,46 +23,65 @@ export class AuthService {
             catchError(err => throwError(err))
         );
 
-    // Define observables for SDK methods that return promises by default
-    // For each Auth0 SDK method, first ensure the client instance is ready
-    // concatMap: Using the client instance, call SDK method; SDK returns a promise
-    // from: Convert that resulting promise into an observable
-    isAuthenticated$ = this.auth0Client$
-        .pipe(
-            concatMap((client: Auth0Client) => from(client.isAuthenticated())),
-            tap(res => this.loggedIn = res)
-        );
+    /**
+     * Define observables for SDK methods that return promises by default
+     * For each Auth0 SDK method, first ensure the client instance is ready
+     * - concatMap: Using the client instance, call SDK method; SDK returns a promise
+     * - from: Convert that resulting promise into an observable
+     */
+    isAuthenticated$ = this.auth0Client$.pipe(
+        concatMap((client: Auth0Client) => from(client.isAuthenticated())),
+        tap(res => this.loggedIn = res)
+    );
 
-    handleRedirectCallback$ = this.auth0Client$
-        .pipe(concatMap((client: Auth0Client) => from(client.handleRedirectCallback())));
+    handleRedirectCallback$ = this.auth0Client$.pipe(
+        concatMap((client: Auth0Client) => from(client.handleRedirectCallback()))
+    );
 
-    // Create subject and public observable of user profile data
+    /**
+     * subject user profile data
+     */
     private userProfileSubject$ = new BehaviorSubject<any>(null);
-    userProfile$ = this.userProfileSubject$.asObservable();
 
-    // Create a local property for login status
+    /**
+     * observable user profile data
+     * @see {@link #getUser} method for getting the currenly logged in user
+     */
+    private userProfile$ = this.userProfileSubject$.asObservable();
+
+    /**
+     * local property for login status
+     */
     loggedIn: boolean = null;
 
+    /**
+     * constructor
+     * @param router the application router
+     */
     constructor(private router: Router) {
         // On initial load, check authentication state with authorization server
         // Set up local auth streams if user is already authenticated
         this.localAuthSetup();
+
         // Handle redirect from Auth0 login
         this.handleAuthCallback();
     }
 
-    // When calling, options can be passed if desired
-    // https://auth0.github.io/auth0-spa-js/classes/auth0client.html#getuser
-    getUser$(options?): Observable<any> {
+    /**
+     * @see https://auth0.github.io/auth0-spa-js/classes/auth0client.html#getuser
+     * @param options optional options get getting the user
+     * @retrn the current user observable
+     */
+    private getUser$(options?: GetIdTokenClaimsOptions): Observable<any> {
         return this.auth0Client$.pipe(
-            concatMap((client: Auth0Client) => from(client.getUser(options))),
+            concatMap((client: Auth0Client) => from(client.getIdTokenClaims(options))),
             tap(user => this.userProfileSubject$.next(user))
         );
     }
 
     /**
-     * this method should be private, called only once during app initialization in the constructor
-     * for this service
+     * this method should be private, called only once during app initialization
+     * in the constructor for this service
      */
     private localAuthSetup() {
         // Set up local authentication streams
@@ -77,24 +97,6 @@ export class AuthService {
             })
         );
         checkAuth$.subscribe();
-    }
-
-    /**
-     * the call with log in the user using Auth0's universal login
-     *
-     * @param redirectPath where to redirect the user to after login
-     */
-    public login(redirectPath: string = '/') {
-        // A desired redirect path can be passed to login method
-        // (e.g., from a route guard)
-        // Ensure Auth0 client instance exists
-        this.auth0Client$.subscribe((client: Auth0Client) => {
-            // Call method to log in
-            client.loginWithRedirect({
-                redirect_uri: authConfig.redirect_uri,
-                appState: {target: redirectPath}
-            });
-        });
     }
 
     /**
@@ -130,10 +132,28 @@ export class AuthService {
     }
 
     /**
+     * the call with log in the user using Auth0's universal login
+     *
+     * @param redirectPath where to redirect the user to after login
+     */
+    public login(redirectPath: string = '/') {
+        // A desired redirect path can be passed to login method
+        // (e.g., from a route guard)
+        // Ensure Auth0 client instance exists
+        this.auth0Client$.subscribe((client: Auth0Client) => {
+            // Call method to log in
+            client.loginWithRedirect({
+                redirect_uri: authConfig.redirect_uri,
+                appState: {target: redirectPath}
+            });
+        });
+    }
+
+    /**
      * logs out the user and redirects to the return to page configured
      * in the login configs
      */
-    logout() {
+    public logout() {
         // Ensure Auth0 client instance exists
         this.auth0Client$.subscribe((client: Auth0Client) => {
             // Call method to log out
@@ -142,5 +162,30 @@ export class AuthService {
                 returnTo: authConfig.returnTo
             });
         });
+    }
+
+    /**
+     * @return the {@link Auth0User} object for the currently logged in user
+     */
+    public getUser(): Observable<Auth0User> {
+        return this.userProfile$.pipe(
+            map(user => {
+                return {
+                    token: user.__raw,
+                    nickname: user.nickname,
+                    name: user.name,
+                    picture: user.picture,
+                    updatedAt: user.updated_at,
+                    email: user.email,
+                    emailVerified: user.email_verified,
+                    iss: user.iss,
+                    sub: user.sub,
+                    aud: user.aud,
+                    iat: user.iat,
+                    exp: user.exp,
+                    nonce: user.nonce
+                }
+            })
+        );
     }
 }
