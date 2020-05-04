@@ -1,12 +1,17 @@
 @import '../styles/variables';
 
 .app-toolbar {
-
+    background-color: map-get($app-primary, "default");
+    color: map-get($app-primary, "text");
+    width: 100%;
+    //height: 64px;
+    vertical-align: middle;
+    padding: 16px 0;
+    //line-height: 32px;
 }
 
 .logo {
     position: absolute;
-    //clip: rect(0, 128px, 128px, 0);
     height: 10%;
 }
 
@@ -15,28 +20,31 @@
     flex-direction: row;
     width: 100%;
 
+    * {
+        vertical-align: middle;
+    }
+
     .toolbar-left {
+        padding-left: 16px;
         display: flex;
         flex-grow: 1;
         flex-direction: row;
     }
 
-    .toolbar-left mat-icon {
-        vertical-align: middle;
+    .toolbar-center {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: row;
     }
 
     .toolbar-right {
+        padding-right: 16px;
         display: flex;
         flex-grow: 1;
         flex-direction: row-reverse;
     }
 
-    .toolbar-right mat-icon {
-        vertical-align: middle;
-    }
-
     .user-email {
-        font-size: 16px;
         text-decoration: underline;
         margin-right: 8px;
         cursor: pointer;

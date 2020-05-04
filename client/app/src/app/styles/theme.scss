@@ -1,6 +1,6 @@
+@import '~@angular/material/theming';
 @import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
-@import 'node_modules/@angular/material/theming';
-@import '~@angular/cdk/overlay-prebuilt.css';
+
 
 @include mat-core();
 

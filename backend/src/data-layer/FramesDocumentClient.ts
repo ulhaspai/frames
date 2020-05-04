@@ -60,7 +60,7 @@ export class FramesDocumentClient implements IFramesDataAccess {
             }).promise()
             return Promise.resolve(user)
         } catch (err) {
-            logger.info(" Error creating user", err)
+            logger.info(" Error creating user" + JSON.stringify(err))
             return Promise.reject(err)
         }
     }
@@ -80,24 +80,9 @@ export class FramesDocumentClient implements IFramesDataAccess {
             }
             return Promise.resolve(null)
         } catch (err) {
-            logger.info(" Error getting user", err)
+            logger.info(" Error getting user" + JSON.stringify(err))
             return Promise.reject(err)
         }
     }
-
-    // async searchUsers(searchString: string): Promise<Array<TodoItem>> {
-    //     const result = await this.documentClient.query({
-    //         TableName: TodoDocumentClient.TODOS_TABLE,
-    //         IndexName: TodoDocumentClient.USER_ID_INDEX,
-    //         KeyConditionExpression: 'userId = :userId',
-    //         ExpressionAttributeValues: {
-    //             ':userId': userId
-    //         }
-    //     }).promise()
-    //
-    //     return result.Count > 0
-    //         ? result.Items.map(i => TodoDocumentClient.convertDbItemToTodoItem(i))
-    //         : []
-    // }
 
 }

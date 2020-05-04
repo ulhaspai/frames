@@ -1,25 +1,35 @@
-<mat-toolbar color="primary" class="app-toolbar">
-  <mat-toolbar-row>
+<div class="app-toolbar">
     <div class="toolbar">
 
       <!-- toolbar left -->
       <div class="toolbar-left">
-        <span>FRAMES</span>
-        <span class="spacer"></span>
+        <span>
+          <span>FRAMES</span>
+        </span>
+      </div>
+
+      <!-- toolbar center -->
+      <div class="toolbar-center">
+
       </div>
 
       <!-- toolbar right -->
       <div class="toolbar-right">
         <span *ngIf="auth.loggedIn">
-          <span *ngIf="user$ | async as user" class="user-email">{{user.email }}</span>
-          <mat-icon class="material-icons logout"
-                    matTooltip="Logout"
-                    aria-hidden="false"(click)="auth.logout()">exit_to_app</mat-icon>
+          <span *ngIf="user$ | async as user" class="user-email" [matMenuTriggerFor]="userMenu">{{user.email }}</span>
+          <mat-menu #userMenu="matMenu">
+            <button mat-menu-item (click)="auth.logout()">
+              <mat-icon >exit_to_app</mat-icon>
+              <span>Sign out</span>
+            </button>
+          </mat-menu>
+
+
         </span>
       </div>
 
+
     </div>
-  </mat-toolbar-row>
-</mat-toolbar>
+</div>
 
 

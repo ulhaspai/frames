@@ -55,6 +55,11 @@ export class AuthService {
     loggedIn: boolean = null;
 
     /**
+     * the current logged in user is cached here
+     */
+    currentAuth0User: Auth0User = null;
+
+    /**
      * constructor
      * @param router the application router
      */
@@ -168,9 +173,13 @@ export class AuthService {
      * @return the {@link Auth0User} object for the currently logged in user
      */
     public getUser(): Observable<Auth0User> {
-        return this.userProfile$.pipe(
+        if (this.currentAuth0User) {
+            return of(this.currentAuth0User)
+        }
+
+        const currentAuth0User$ = this.userProfile$.pipe(
             map(user => {
-                return {
+                const mappedUser = {
                     token: user.__raw,
                     nickname: user.nickname,
                     name: user.name,
@@ -185,7 +194,15 @@ export class AuthService {
                     exp: user.exp,
                     nonce: user.nonce
                 }
+                this.currentAuth0User = mappedUser
+                return mappedUser
             })
         );
+
+        return currentAuth0User$;
+    }
+
+    public async getUserPromise(): Promise<Auth0User> {
+        return this.getUser().toPromise()
     }
 }

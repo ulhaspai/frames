@@ -13,11 +13,13 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { PeopleListComponent } from './people-list/people-list.component';
 import { MatListModule } from "@angular/material/list";
+import { SearchComponent } from './search/search.component';
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
     declarations: [
@@ -25,7 +27,8 @@ import { MatListModule } from "@angular/material/list";
         LoginComponent,
         DashboardComponent,
         ToolbarComponent,
-        PeopleListComponent
+        PeopleListComponent,
+        SearchComponent
     ],
     imports: [
         BrowserModule,
@@ -42,10 +45,51 @@ import { MatListModule } from "@angular/material/list";
         MatTooltipModule,
         MatTooltipModule,
         MatListModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+
+        // BrowserModule,
+        // AppRoutingModule,
+        // BrowserAnimationsModule,
+        // BrowserModule,
+        // BrowserAnimationsModule,
+        // FormsModule,
+        // ReactiveFormsModule,
+        // MatCheckboxModule,
+        // MatButtonModule,
+        // MatInputModule,
+        // MatAutocompleteModule,
+        // MatDatepickerModule,
+        // MatFormFieldModule,
+        // MatRadioModule,
+        // MatSelectModule,
+        // MatSliderModule,
+        // MatSlideToggleModule,
+        // MatMenuModule,
+        // MatSidenavModule,
+        // MatToolbarModule,
+        // MatListModule,
+        // MatGridListModule,
+        // MatCardModule,
+        // MatStepperModule,
+        // MatTabsModule,
+        // MatExpansionModule,
+        // MatButtonToggleModule,
+        // MatChipsModule,
+        // MatIconModule,
+        // MatProgressSpinnerModule,
+        // MatProgressBarModule,
+        // MatDialogModule,
+        // MatTooltipModule,
+        // MatSnackBarModule,
+        // MatTableModule,
+        // MatSortModule,
+        // MatPaginatorModule
 
     ],
     providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
 export class AppModule {
 }

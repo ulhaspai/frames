@@ -1,0 +1,14 @@
+<form class="search-form">
+  <mat-form-field class="form-field">
+    <input type="text"
+           matInput
+           placeholder="Search people ..."
+           [formControl]="searchInput"
+           [matAutocomplete]="auto">
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
+        {{ option.email }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>

@@ -1,0 +1,9 @@
+@import '../styles/variables.scss';
+
+.search-form {
+    //display: flex;
+    .mat-form-field {
+        //flex-shrink: 1;
+        width: 100%;
+    }
+}

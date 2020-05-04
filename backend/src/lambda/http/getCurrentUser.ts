@@ -22,8 +22,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     // grab the user id from the JWT payload
     const userId: string = LambdaUtils.getUserId(event)
     const userEmail: string = LambdaUtils.getUserEmail(event)
-    logger.info("userId = ", userId)
-    logger.info("userEmail = ", userEmail)
+    logger.info("userId = " + JSON.stringify(userId))
+    logger.info("userEmail = " + JSON.stringify(userEmail))
 
     // get current user
     let currentUser = await UserManager.getUser(userId)
@@ -33,13 +33,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
             email: userEmail,
             ctime: new Date().toISOString()
         }
-        logger.info("creating new user = ", newUser)
+        logger.info("creating new user = " + JSON.stringify(newUser))
 
         // create new user as user does not exist
         currentUser = await UserManager.createUser(newUser)
     }
 
-    logger.info("current user = ", currentUser)
+    logger.info("current user = " + JSON.stringify(currentUser))
     return {
         statusCode: 201,
         headers: {

@@ -1,16 +1,8 @@
 import { DynamoDBStreamEvent, DynamoDBStreamHandler } from 'aws-lambda'
 import 'source-map-support/register'
-import * as elasticsearch from 'elasticsearch'
-import * as httpAwsEs from 'http-aws-es'
 import { createLogger } from "../../utils/logger";
 import { User } from "../../models/User";
-
-const esHost = process.env.ES_ENDPOINT
-
-const es = new elasticsearch.Client({
-    hosts: [esHost],
-    connectionClass: httpAwsEs
-})
+import { UserManager } from "../../business-logic/UserManager";
 
 const logger = createLogger('userElasticSearchSync')
 
@@ -22,9 +14,9 @@ const logger = createLogger('userElasticSearchSync')
  * @author Ulhas Pai
  */
 export const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent) => {
-    logger.info('Processing events batch from DynamoDB', JSON.stringify(event))
+    logger.info('Processing events batch from DynamoDB: ' + JSON.stringify(event))
     for (const record of event.Records) {
-        logger.info('Processing record ', JSON.stringify(record))
+        logger.info('Processing record ' + JSON.stringify(record))
 
         if (record.eventName !== 'INSERT') {
             // MODIFY and REMOVE will need to be handled SEPARATELY
@@ -33,8 +25,7 @@ export const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent)
 
         // construct the object to be put into elastic search
         const newItem = record.dynamodb.NewImage
-        const userId = newItem.userId.S
-        const body: User = {
+        const user: User = {
             userId: newItem.userId.S,
             name: newItem.name ? newItem.name.S : '',
             email: newItem.email.S,
@@ -42,13 +33,7 @@ export const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent)
         }
 
         // index the new item to elastic search
-        logger.info('Adding record ', body)
-        await es.index({
-            index: 'users-index',
-            type: 'users',
-            id: userId,
-            body
-        })
-
+        logger.info('Adding record ' +  JSON.stringify(user))
+        await UserManager.index(user)
     }
 }

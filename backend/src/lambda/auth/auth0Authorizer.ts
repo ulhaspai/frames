@@ -13,11 +13,11 @@ const logger = createLogger('auth')
  * @author: Ulhas Pai
  */
 export const handler = async (event: CustomAuthorizerEvent): Promise<CustomAuthorizerResult> => {
-    logger.info('Authorizing a user for token = ', event.authorizationToken)
+    logger.info('Authorizing a user for token = ' + event.authorizationToken)
     try {
         const jwtToken = await JwkClient.verifyToken(event.authorizationToken)
         logger.info('User authorized')
-        logger.info('JWT = ', jwtToken)
+        logger.info('JWT = ' + jwtToken)
 
         return {
             principalId: jwtToken.sub,
