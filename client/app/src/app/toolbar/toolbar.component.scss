@@ -2,7 +2,7 @@
 
 .app-toolbar {
     background-color: map-get($app-primary, "default");
-    color: map-get($app-primary, "text");
+    color: map-get($md-palette, 50);
     width: 100%;
     //height: 64px;
     vertical-align: middle;

@@ -1,35 +1,38 @@
 <div class="app-toolbar">
-    <div class="toolbar">
+  <div class="toolbar">
 
-      <!-- toolbar left -->
-      <div class="toolbar-left">
+    <!-- toolbar left -->
+    <div class="toolbar-left">
         <span>
           <span>FRAMES</span>
         </span>
-      </div>
+    </div>
 
-      <!-- toolbar center -->
-      <div class="toolbar-center">
+    <!-- toolbar center -->
+    <div class="toolbar-center">
 
-      </div>
+    </div>
 
-      <!-- toolbar right -->
-      <div class="toolbar-right">
-        <span *ngIf="auth.loggedIn">
-          <span *ngIf="user$ | async as user" class="user-email" [matMenuTriggerFor]="userMenu">{{user.email }}</span>
-          <mat-menu #userMenu="matMenu">
-            <button mat-menu-item (click)="auth.logout()">
-              <mat-icon >exit_to_app</mat-icon>
-              <span>Sign out</span>
-            </button>
-          </mat-menu>
+    <!-- toolbar right -->
+    <div class="toolbar-right">
+      <span *ngIf="auth.loggedIn" [matMenuTriggerFor]="userMenu">
+        <span *ngIf="user$ | async as user" class="user-email">{{user.email}}</span>
+      </span>
+      <span *ngIf="!auth.loggedIn">
+        <mat-icon>account_circle</mat-icon>
+      </span>
 
-
-        </span>
-      </div>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="auth.logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Sign out</span>
+        </button>
+      </mat-menu>
 
 
     </div>
+
+  </div>
 </div>
 
 

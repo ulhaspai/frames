@@ -11,7 +11,7 @@ img {
 
 button {
     margin-top: 20px;
-    margin-right: 20px;
+    margin-left: 20px;
 }
 
 span, a {
@@ -25,7 +25,13 @@ a {
 }
 
 .login-page {
+    text-align: center
+}
 
+.login-card {
+    width: 800px;
+    margin-top: 200px;
+    display: inline-block;
 }
 
 .login-box {
@@ -43,6 +49,7 @@ a {
     flex-direction: column;
     justify-content: center;
     flex: 1;
+    align-items: flex-end;
 }
 
 .login-illustration {

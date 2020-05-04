@@ -1,4 +1,5 @@
 import { User } from "../models/User";
+import { Friendship } from "../models/Friendship";
 
 /**
  * IFramesDataAccess interface defines all the behaviors a frames data access class should provide
@@ -24,4 +25,18 @@ export interface IFramesDataAccess {
      * @return the newly created user
      */
     createUser(user: User): Promise<User>
+
+    /**
+     * creates the requested friendship
+     *
+     * @param friendship the friend relationship between 2 people
+     */
+    addFriend(friendship: Friendship): Promise<Friendship>
+
+    /**
+     * returns all active and inactive friendships for the input user id
+     *
+     * @param userId user whose friendships are required
+     */
+    getFriendships(userId: string): Promise<Array<Friendship>>
 }

@@ -95,6 +95,6 @@ export class UserManager {
             }
         }).sort((a: UserSearchResult, b: UserSearchResult) => b.score - a.score)
             .slice(0, 10)
-
     }
+
 }

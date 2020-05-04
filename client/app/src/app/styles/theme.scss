@@ -1,5 +1,6 @@
 @import '~@angular/material/theming';
-@import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
+
 
 
 @include mat-core();
@@ -28,8 +29,8 @@ $md-palette: (
     )
 );
 
-$app-primary: mat-palette($md-palette, 900, 900, 900, 50);
-$app-accent: mat-palette($md-palette, 700, 700, 700, 50);
+$app-primary: mat-palette($md-palette, 900, 900, 900, 800);
+$app-accent: mat-palette($md-palette, 700, 700, 700, 800);
 
 // The warn palette is optional (defaults to red).
 $app-warn: mat-palette($mat-red);

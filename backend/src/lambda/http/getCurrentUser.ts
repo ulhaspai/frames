@@ -27,6 +27,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // get current user
     let currentUser = await UserManager.getUser(userId)
+    let created: boolean = false
     if (!currentUser) {
         const newUser: User = {
             userId: userId,
@@ -37,11 +38,12 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
         // create new user as user does not exist
         currentUser = await UserManager.createUser(newUser)
+        created = true
     }
 
     logger.info("current user = " + JSON.stringify(currentUser))
     return {
-        statusCode: 201,
+        statusCode: created ? 201 : 200,
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Credentials': true

@@ -1,14 +1,18 @@
 <div class="login-page">
-  <div class="login-box">
-    <div class="login-content">
-      <h1>Welcome</h1>
-      <form>
-        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Login</button>
-        <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Signup</button>
-        <button mat-raised-button color="primary" (click)="gotoDashboard()" *ngIf="auth.loggedIn">Go to dashboard</button>
 
-      </form>
-    </div>
-    <img class="login-illustration" src="../../assets/login-illustration.svg"/>
-  </div>
+  <mat-card class="login-card">
+    <mat-card-content class="login-box">
+      <div class="login-content">
+        <h1>Welcome</h1>
+        <form>
+          <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Login</button>
+          <button mat-raised-button color="primary" (click)="auth.login('/dashboard')" *ngIf="!auth.loggedIn">Signup</button>
+          <button mat-raised-button color="primary" (click)="gotoDashboard()" *ngIf="auth.loggedIn">Go to dashboard</button>
+
+        </form>
+      </div>
+      <img class="login-illustration" src="../../assets/login-illustration.svg"/>
+    </mat-card-content>
+  </mat-card>
+
 </div>

@@ -1,14 +1,22 @@
 <form class="search-form">
-  <mat-form-field class="form-field">
+
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Search</mat-label>
     <input type="text"
            matInput
-           placeholder="Search people ..."
+           placeholder="type email address"
            [formControl]="searchInput"
            [matAutocomplete]="auto">
-    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+    <mat-icon class="material-icons" matSuffix>exit_to_app</mat-icon>
+    <mat-autocomplete  #auto="matAutocomplete">
       <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
         {{ option.email }}
       </mat-option>
     </mat-autocomplete>
+<!--    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
+<!--    <mat-hint>Hint</mat-hint>-->
   </mat-form-field>
+
+
+  <mat-icon class="material-icons">exit_to_app</mat-icon>
 </form>

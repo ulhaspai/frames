@@ -20,6 +20,7 @@ import { PeopleListComponent } from './people-list/people-list.component';
 import { MatListModule } from "@angular/material/list";
 import { SearchComponent } from './search/search.component';
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatCardModule } from "@angular/material/card";
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
         FormsModule,
         ReactiveFormsModule,
         MatAutocompleteModule,
+        MatCardModule,
 
         // BrowserModule,
         // AppRoutingModule,
@@ -71,7 +73,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
         // MatToolbarModule,
         // MatListModule,
         // MatGridListModule,
-        // MatCardModule,
         // MatStepperModule,
         // MatTabsModule,
         // MatExpansionModule,
