@@ -1,9 +1,7 @@
 import { User } from "./user";
+import { Friendship } from "./friendship";
 
 export class UserSearchResult extends User {
     score: number
-    friendStatus: {
-        requested: boolean
-        accepted: boolean
-    }
+    friendship: Friendship
 }

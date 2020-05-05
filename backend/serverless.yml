@@ -119,6 +119,11 @@ functions:
             summary: Search a user
             description: Searches users by performing free text search in elasticsearch
     iamRoleStatements:
+      # need access to friend table to add friendship to search result
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FRIEND_TABLE}
       - Effect: Allow
         Action:
           - dynamodb:Query
@@ -154,6 +159,10 @@ functions:
         Action:
           - dynamodb:Query
           - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FRIEND_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}
       # enabling tracing
       - Effect: Allow

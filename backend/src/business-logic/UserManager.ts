@@ -6,6 +6,8 @@ import { ElasticsearchQueryHit } from "../models/ElasticsearchQueryHit";
 import { IStreamDataAccess } from "../data-layer/IStreamDataAccess";
 import { ElasticsearchStreamClient } from "../data-layer/ElasticsearchStreamClient";
 import { UserSearchResult } from "../models/UserSearchResult";
+import { FriendManager } from "./FriendManager";
+import { Friendship } from "../models/Friendship";
 
 const userDataAccess: IFramesDataAccess = new FramesDocumentClient()
 const elasticDataAccess: IStreamDataAccess = new ElasticsearchStreamClient()
@@ -62,13 +64,10 @@ export class UserManager {
     static async searchUsers(query: string, userId: string): Promise<Array<UserSearchResult>> {
         logger.info("searching elasticsearch query = "  + JSON.stringify(query))
         const hits: Array<ElasticsearchQueryHit<User>> = await elasticDataAccess.search(query)
-        let results = UserManager.mapAndSortElasticsearchHitToUserSearchResult(hits)
+        let results = await UserManager.mapAndSortElasticsearchHitToUserSearchResult(hits, userId)
 
         // filter out the current logged in user, since they wont be searching for themselves
         results = results.filter(r => r.userId !== userId)
-
-        // TODO: we need to filter out users who are already added as friends
-
 
         return results
     }
@@ -78,23 +77,33 @@ export class UserManager {
      * and returns the top 10 search results
      *
      * @param items the items to be mapped and sorted
-     * @result the top 10 user search results if matches are found, otherwise empty list
+     * @param userId the current user id
+     * @result the top 50 user search results if matches are found, otherwise empty list
      */
-    private static mapAndSortElasticsearchHitToUserSearchResult(items: ElasticsearchQueryHit<User>[]): UserSearchResult[] {
-        return items.map(item => {
+    private static async mapAndSortElasticsearchHitToUserSearchResult(items: ElasticsearchQueryHit<User>[], userId: string): Promise<UserSearchResult[]> {
+        const friendships = await FriendManager.getFriendships(userId)
+        return Promise.resolve(items.map(item => {
+            // find friendship between userId and item._source.userId
+            let friendship: Friendship = friendships.find(f => f.friendId === item._source.userId)
+            if (!friendship) {
+                // if there is no friendship, create a fake one that indicates there is no friendship
+                friendship = {
+                    userId: userId,
+                    friendId: item._source.userId,
+                    accepted: false,
+                    requestedBy: null,
+                    ctime: null
+                }
+            }
             return {
                 userId: item._source.userId,
                 name: item._source.name,
                 email: item._source.email,
                 ctime: item._source.ctime,
                 score: item._score,
-                friendStatus: {
-                    requested: false,
-                    accepted: false
-                }
+                friendship: friendship
             }
-        }).sort((a: UserSearchResult, b: UserSearchResult) => b.score - a.score)
-            .slice(0, 10)
+        }).sort((a: UserSearchResult, b: UserSearchResult) => b.score - a.score).slice(0, 50))
     }
 
 }

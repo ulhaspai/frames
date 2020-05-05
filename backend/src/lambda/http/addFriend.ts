@@ -19,7 +19,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // grab the user id from the JWT payload
     const userId: string = LambdaUtils.getUserId(event)
-    const friendId: string = event.pathParameters.friendId
+
+    // | (pipes) are a problem, so client will encode and send the friendId
+    const friendId: string = decodeURIComponent(event.pathParameters.friendId)
 
     logger.info("userId = " + JSON.stringify(userId))
     logger.info("friendId = " + JSON.stringify(friendId))

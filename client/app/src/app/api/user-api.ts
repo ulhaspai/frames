@@ -33,7 +33,7 @@ export class UserApi {
      * @param idToken authorization token
      * @param query the query string to search
      */
-    public static async searchUsers(idToken: string, query: string): Promise<UserSearchResult> {
+    public static async searchUsers(idToken: string, query: string): Promise<UserSearchResult[]> {
         console.log('Querying users for query : ', query)
         const response = await Axios.get(`${apiEndpoint}/search-user`, {
             headers: {
@@ -46,6 +46,24 @@ export class UserApi {
         })
         console.log('Query user result: ', response.data)
         return response.data.items
+    }
+
+    /**
+     * searches users within the system. return the top 10 search results
+     *
+     * @param idToken authorization token
+     * @param friendId the user to be added as friend
+     */
+    public static async addFriend(idToken: string, friendId: string): Promise<boolean> {
+        console.log('Adding friend : ', friendId)
+        const encodedFriend = encodeURIComponent(friendId)
+        const response = await Axios.get(`${apiEndpoint}/friends/${encodedFriend}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.status === 201
     }
 
 }

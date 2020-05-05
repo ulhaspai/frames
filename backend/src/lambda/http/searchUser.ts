@@ -23,6 +23,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const userId = LambdaUtils.getUserId(event)
     const searchTerm = event.queryStringParameters.query
 
+    // TODO: validate query params
+
     let results: Array<UserSearchResult>;
 
     // so now we query elasticsearch

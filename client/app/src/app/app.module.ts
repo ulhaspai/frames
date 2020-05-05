@@ -21,6 +21,12 @@ import { MatListModule } from "@angular/material/list";
 import { SearchComponent } from './search/search.component';
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatCardModule } from "@angular/material/card";
+import { MatDialogModule } from "@angular/material/dialog";
+import { SearchResultDialogComponent } from "./search/search-result-dialog/search-result-dialog.component";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
     declarations: [
@@ -29,7 +35,8 @@ import { MatCardModule } from "@angular/material/card";
         DashboardComponent,
         ToolbarComponent,
         PeopleListComponent,
-        SearchComponent
+        SearchComponent,
+        SearchResultDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -50,18 +57,13 @@ import { MatCardModule } from "@angular/material/card";
         ReactiveFormsModule,
         MatAutocompleteModule,
         MatCardModule,
+        MatDialogModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule,
 
-        // BrowserModule,
-        // AppRoutingModule,
-        // BrowserAnimationsModule,
-        // BrowserModule,
-        // BrowserAnimationsModule,
-        // FormsModule,
-        // ReactiveFormsModule,
         // MatCheckboxModule,
-        // MatButtonModule,
-        // MatInputModule,
-        // MatAutocompleteModule,
         // MatDatepickerModule,
         // MatFormFieldModule,
         // MatRadioModule,
@@ -78,15 +80,9 @@ import { MatCardModule } from "@angular/material/card";
         // MatExpansionModule,
         // MatButtonToggleModule,
         // MatChipsModule,
-        // MatIconModule,
-        // MatProgressSpinnerModule,
         // MatProgressBarModule,
-        // MatDialogModule,
         // MatTooltipModule,
-        // MatSnackBarModule,
-        // MatTableModule,
         // MatSortModule,
-        // MatPaginatorModule
 
     ],
     providers: [],

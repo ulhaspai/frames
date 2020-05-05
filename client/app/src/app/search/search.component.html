@@ -6,17 +6,16 @@
            matInput
            placeholder="type email address"
            [formControl]="searchInput"
-           [matAutocomplete]="auto">
-    <mat-icon class="material-icons" matSuffix>exit_to_app</mat-icon>
-    <mat-autocomplete  #auto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
-        {{ option.email }}
-      </mat-option>
-    </mat-autocomplete>
-<!--    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-<!--    <mat-hint>Hint</mat-hint>-->
+           (keyup.enter)="search()">
+    <div matSuffix>
+      <mat-icon class="material-icons" *ngIf="!searching">search</mat-icon>
+      <mat-progress-spinner *ngIf="searching" class="search-results-loading"
+                            [diameter]="24"
+                            [color]="'primary'"
+                            [mode]="'indeterminate'">
+      </mat-progress-spinner>
+    </div>
+    <mat-hint><mat-icon>info</mat-icon> press enter to search</mat-hint>
   </mat-form-field>
 
-
-  <mat-icon class="material-icons">exit_to_app</mat-icon>
 </form>
