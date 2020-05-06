@@ -2,6 +2,7 @@ import { User } from "../models/user";
 import { apiEndpoint } from "./api.endpoint";
 import Axios from "axios";
 import { UserSearchResult } from "../models/user-search-result";
+import { Friend } from "../models/friend";
 
 /**
  * User service for performing actions on user data
@@ -57,13 +58,30 @@ export class UserApi {
     public static async addFriend(idToken: string, friendId: string): Promise<boolean> {
         console.log('Adding friend : ', friendId)
         const encodedFriend = encodeURIComponent(friendId)
-        const response = await Axios.get(`${apiEndpoint}/friends/${encodedFriend}`, {
+        const response = await Axios.post(`${apiEndpoint}/friends/${encodedFriend}`, null, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${idToken}`
             }
         })
         return response.status === 201
+    }
+
+    /**
+     * gets all the friends for the current logged in user
+     *
+     * @param idToken authorization token
+     * @param friendId the user to be added as friend
+     */
+    public static async getFriends(idToken: string): Promise<Friend[]> {
+        console.log('Getting friends : ')
+        const response = await Axios.get(`${apiEndpoint}/friends`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.data.items
     }
 
 }

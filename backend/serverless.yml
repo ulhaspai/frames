@@ -147,13 +147,49 @@ functions:
       ES_ENDPOINT: !GetAtt UserSearchElasticsearchStream.DomainEndpoint
     events:
       - http:
-          method: get
+          method: post
           path: friends/{friendId}
           cors: true
           authorizer: Auth
           documentation:
             summary: Add a new friend
             description: Adds a new user as a friend and sends a request to add to the other person
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FRIEND_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}
+      # enabling tracing
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+          - xray:GetSamplingRules
+          - xray:GetSamplingTargets
+          - xray:GetSamplingStatisticSummaries
+        Resource:
+          - '*'
+
+  # Get friends lambda function
+  GetFriends:
+    handler: src/lambda/http/getFriends.handler
+    environment:
+      # since ES is a managed resource, we need the domain from the resource
+      ES_ENDPOINT: !GetAtt UserSearchElasticsearchStream.DomainEndpoint
+    events:
+      - http:
+          method: get
+          path: friends
+          cors: true
+          # authorizer: Auth
+          documentation:
+            summary: Get frienfs
+            description: Gets all the friends for the current user along with the friendship
     iamRoleStatements:
       - Effect: Allow
         Action:

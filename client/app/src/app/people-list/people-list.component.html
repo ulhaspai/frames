@@ -1,15 +1,45 @@
 <mat-list>
-  <div mat-subheader>Folders</div>
-  <mat-list-item *ngFor="let folder of folders">
-    <mat-icon mat-list-icon>folder</mat-icon>
-    <div mat-line>{{folder.name}}</div>
-    <div mat-line> {{folder.updated | date}} </div>
-  </mat-list-item>
+  <div class="header">
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Friends List</mat-label>
+      <input type="text"
+             matInput
+             placeholder="Friend List" disabled>
+      <div matSuffix>
+
+        <mat-icon class="material-icons pointer" *ngIf="!refreshing"
+                  matTooltip="Refresh"
+                  (click)="getFriends()">refresh</mat-icon>
+        <mat-progress-spinner *ngIf="refreshing" class="search-results-loading"
+                              [diameter]="24"
+                              [color]="'primary'"
+                              [mode]="'indeterminate'">
+        </mat-progress-spinner>
+      </div>
+    </mat-form-field>
+  </div>
+
+  <div mat-subheader>Invitation to connect</div>
+  <ng-container *ngFor="let friend of friends$ | async">
+    <mat-list-item *ngIf="!friend.friendship.accepted">
+      <mat-icon mat-list-icon>person_add</mat-icon>
+      <div mat-line>{{ friend.user.email }}</div>
+      <div>
+        <button mat-raised-button color="primary" (click)="addFriend(friend)"
+        [disabled]="isDisabled(friend)">Accept</button>
+      </div>
+    </mat-list-item>
+  </ng-container>
+
   <mat-divider></mat-divider>
-  <div mat-subheader>Notes</div>
-  <mat-list-item *ngFor="let note of notes">
-    <mat-icon mat-list-icon>note</mat-icon>
-    <div mat-line>{{note.name}}</div>
-    <div mat-line> {{note.updated | date}} </div>
-  </mat-list-item>
+
+
+  <div mat-subheader>Friends</div>
+  <ng-container *ngFor="let friend of friends$ | async">
+    <mat-list-item *ngIf="friend.friendship.accepted">
+      <mat-icon mat-list-icon>person</mat-icon>
+      <div mat-line>{{ friend.user.email }}</div>
+    </mat-list-item>
+  </ng-container>
+
 </mat-list>

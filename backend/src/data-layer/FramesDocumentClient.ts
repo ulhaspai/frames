@@ -77,15 +77,40 @@ export class FramesDocumentClient implements IFramesDataAccess {
                 }
             }).promise()
 
-            if (result.Count != 0) {
-                return Promise.resolve(FramesDocumentClient.convertDbItemToUser(result.Items[0]))
-            }
-            return Promise.resolve(null)
+            return result.Count != 0
+                ? Promise.resolve(FramesDocumentClient.convertDbItemToUser(result.Items[0]))
+                : Promise.resolve(null)
         } catch (err) {
             logger.info(" Error getting user" + JSON.stringify(err))
             return Promise.reject(err)
         }
     }
+
+    // async getUsers(userIds: string[]): Promise<User[]> {
+    //     try {
+    //         if (userIds && userIds.length > 0) {
+    //             let condition = 'userId IN ('
+    //             for (let i = 0; i < userIds.length; i++) {
+    //                 condition += (`:userId${i}` + (i !== userIds.length-1 ? ',' : ')') )
+    //             }
+    //             const result = await this.documentClient.query({
+    //                 TableName: FramesDocumentClient.USER_TABLE,
+    //                 KeyConditionExpression: condition,
+    //                 ExpressionAttributeValues: {
+    //                     ':userId': userId
+    //                 }
+    //             }).promise()
+    //
+    //             return result.Count != 0
+    //                 ? Promise.resolve(FramesDocumentClient.convertDbItemToUser(result.Items))
+    //                 : Promise.resolve([])
+    //         }
+    //         return Promise.resolve([])
+    //     } catch (err) {
+    //         logger.info("Error getting users : " + JSON.stringify(err))
+    //         return Promise.reject(err)
+    //     }
+    // }
 
     async addFriend(friendship: Friendship): Promise<Friendship> {
         try {

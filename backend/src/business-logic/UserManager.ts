@@ -8,6 +8,7 @@ import { ElasticsearchStreamClient } from "../data-layer/ElasticsearchStreamClie
 import { UserSearchResult } from "../models/UserSearchResult";
 import { FriendManager } from "./FriendManager";
 import { Friendship } from "../models/Friendship";
+import { Friend } from "../models/Friend";
 
 const userDataAccess: IFramesDataAccess = new FramesDocumentClient()
 const elasticDataAccess: IStreamDataAccess = new ElasticsearchStreamClient()
@@ -104,6 +105,30 @@ export class UserManager {
                 friendship: friendship
             }
         }).sort((a: UserSearchResult, b: UserSearchResult) => b.score - a.score).slice(0, 50))
+    }
+
+
+    /**
+     * returns all the friends for the input user id along with their friendship
+     *
+     * @param userId the user id of the user
+     */
+    public static async getFriends(userId: string): Promise<Array<Friend>> {
+        logger.info("fetching friends for userId = "  + userId)
+        const friendships = await FriendManager.getFriendships(userId)
+        if (friendships) {
+            const friends = []
+            for (const friendship of friendships) {
+                const friend = {
+                    user: await UserManager.getUser(friendship.friendId),
+                    friendship: friendship
+                }
+                friends.push(friend)
+            }
+            return Promise.resolve(friends)
+        }
+
+        return Promise.resolve([])
     }
 
 }
