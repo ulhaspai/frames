@@ -1,8 +1,15 @@
+@import '../styles/variables';
 .mat-list {
     padding-top: 0;
 }
+
 .header {
     .mat-form-field {
         width: 100%;
     }
+}
+
+.friend {
+    border-bottom: 1px solid $border-color;
+    cursor: pointer;
 }

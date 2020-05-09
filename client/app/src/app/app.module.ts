@@ -27,6 +27,8 @@ import { MatTableModule } from "@angular/material/table";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { ChatboxComponent } from './chatbox/chatbox.component';
+import { MessageStreamComponent } from './message-stream/message-stream.component';
 
 @NgModule({
     declarations: [
@@ -37,6 +39,8 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
         PeopleListComponent,
         SearchComponent,
         SearchResultDialogComponent,
+        ChatboxComponent,
+        MessageStreamComponent,
     ],
     imports: [
         BrowserModule,

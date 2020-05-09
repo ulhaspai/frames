@@ -1,0 +1,27 @@
+<div class="chatbox-container">
+
+  <!-- MESSAGE STREAM -->
+  <div class="stream-content">
+    <app-message-stream></app-message-stream>
+  </div>
+
+  <!-- MESSAGE INPUT -->
+  <div class="stream-input">
+    <form class="message-form">
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Search</mat-label>
+        <input type="text"
+               matInput
+               placeholder="type email address"
+               [formControl]="messageInput"
+               (keyup.enter)="sendMessage()">
+        <div matSuffix class="actions">
+          <mat-icon class="material-icons action">videocam</mat-icon>
+          <mat-icon class="material-icons action">attach_file</mat-icon>
+        </div>
+      </mat-form-field>
+
+    </form>
+  </div>
+</div>

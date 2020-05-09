@@ -12,6 +12,8 @@ export class Auth0User {
     email: string
     emailVerified: boolean
     iss: string
+
+    // this is the auth0 userId
     sub: string
     aud: string
     iat: number

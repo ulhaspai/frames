@@ -1,0 +1,23 @@
+<div *ngIf="!messageStreamService.currentFriend" class="no-friend-selected-container">
+  <div>Hello, {{ auth0User.email }} </div>
+  <div>Use the search bar above to search and add friends</div>
+  <div>Click on a friend on the left to start conversation with them</div>
+</div>
+<div *ngIf="messageStreamService.currentFriend" class="friend-selected-container">
+
+  <div class="message-stream-header">
+    <p>Chat with <b>{{ messageStreamService.currentFriend.user.email }}</b></p>
+  </div>
+
+  <div class="message-stream-body">
+
+    <!-- MESSAGE STREAM CONTENT -->
+    <div class="message-stream-body-content">
+      <ng-container *ngFor="let message of messageStreamService.currentMessageStream.messages">
+        <div>{{ formatDate(message.timestamp) }} {{ message.senderUserId }} {{ message.content }}</div>
+      </ng-container>
+    </div>
+  </div>
+
+</div>
+

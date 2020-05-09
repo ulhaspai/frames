@@ -7,10 +7,10 @@
              placeholder="Friend List" disabled>
       <div matSuffix>
 
-        <mat-icon class="material-icons pointer" *ngIf="!refreshing"
+        <mat-icon class="material-icons pointer" *ngIf="!peoples.refreshing"
                   matTooltip="Refresh"
-                  (click)="getFriends()">refresh</mat-icon>
-        <mat-progress-spinner *ngIf="refreshing" class="search-results-loading"
+                  (click)="peoples.getFriends()">refresh</mat-icon>
+        <mat-progress-spinner *ngIf="peoples.refreshing" class="search-results-loading"
                               [diameter]="24"
                               [color]="'primary'"
                               [mode]="'indeterminate'">
@@ -19,9 +19,9 @@
     </mat-form-field>
   </div>
 
-  <div mat-subheader>Invitation to connect</div>
-  <ng-container *ngFor="let friend of friends$ | async">
-    <mat-list-item *ngIf="!friend.friendship.accepted">
+  <div mat-subheader *ngIf="peoples.numInvites > 0">Invitation to connect</div>
+  <ng-container *ngFor="let friend of peoples.friends$ | async">
+    <mat-list-item *ngIf="!friend.friendship.accepted" class="friend-invite">
       <mat-icon mat-list-icon>person_add</mat-icon>
       <div mat-line>{{ friend.user.email }}</div>
       <div>
@@ -31,12 +31,12 @@
     </mat-list-item>
   </ng-container>
 
-  <mat-divider></mat-divider>
+  <mat-divider *ngIf="peoples.numInvites > 0"></mat-divider>
 
 
   <div mat-subheader>Friends</div>
-  <ng-container *ngFor="let friend of friends$ | async">
-    <mat-list-item *ngIf="friend.friendship.accepted">
+  <ng-container *ngFor="let friend of peoples.friends$ | async">
+    <mat-list-item *ngIf="friend.friendship.accepted" class="friend" (click)="selectFriend(friend)">
       <mat-icon mat-list-icon>person</mat-icon>
       <div mat-line>{{ friend.user.email }}</div>
     </mat-list-item>

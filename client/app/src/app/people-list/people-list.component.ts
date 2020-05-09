@@ -5,6 +5,8 @@ import { AuthService } from "../login/auth.service";
 import { Auth0User } from "../models/auth-user";
 import { UserApi } from "../api/user-api";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MessageStreamService } from "../message-stream/message-stream.service";
+import { PeopleListService } from "./people-list.service";
 
 @Component({
     selector: 'app-people-list',
@@ -15,11 +17,11 @@ export class PeopleListComponent implements OnInit {
 
     private auth0User$: Observable<Auth0User>;
     private auth0User: Auth0User;
-    friends$: Observable<Friend[]>;
-    refreshing: boolean = false;
     addingFriends: {[key:string]: boolean} = {}
 
     constructor(public auth: AuthService,
+                public messageStreamService: MessageStreamService,
+                public peoples: PeopleListService,
                 private _snackBar: MatSnackBar) {
     }
 
@@ -28,26 +30,6 @@ export class PeopleListComponent implements OnInit {
         this.auth0User$.subscribe(next => {
             this.auth0User = next
         });
-        this.getFriends()
-    }
-
-    getFriends() {
-        this.refreshing = true
-        if (this.auth0User) {
-            this.getFriendsInternal()
-        } else {
-            this.auth0User$.subscribe(user => {
-                this.getFriendsInternal()
-            })
-        }
-    }
-
-    private getFriendsInternal() {
-        this.friends$ = from(UserApi.getFriends(this.auth0User.token)
-            .then((resolve) => {
-                this.refreshing = false;
-                return resolve
-            } ))
     }
 
     async addFriend(option: Friend) {
@@ -59,7 +41,7 @@ export class PeopleListComponent implements OnInit {
             option.friendship.accepted = true
         }
         this._snackBar.open("Added Friend: " + option.user.email, null, {
-            duration: 2000,
+            duration: 3000,
         });
     }
 
@@ -67,5 +49,8 @@ export class PeopleListComponent implements OnInit {
         return false // this.addingFriends[friend.user.userId]
     }
 
+    selectFriend(friend: Friend): void {
+        this.messageStreamService.chatWithFriend(friend)
+    }
 
 }
