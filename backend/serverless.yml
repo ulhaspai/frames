@@ -33,6 +33,9 @@ custom:
       - name: SendMessageRequest
         contentType: application/json
         schema: ${file(models/send-message-request.json)}
+      - name: SendFileRequest
+        contentType: application/json
+        schema: ${file(models/send-file-request.json)}
 
 provider:
   name: aws
