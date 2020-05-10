@@ -29,13 +29,10 @@ custom:
         version: v1.0.0
         title: frames application
         description: Serverless application for framees
-#    models:
-#      - name: CreateTodoRequest
-#        contentType: application/json
-#        schema: ${file(models/create-todo-request.json)}
-#      - name: UpdateTodoRequest
-#        contentType: application/json
-#        schema: ${file(models/update-todo-request.json)}
+    models:
+      - name: SendMessageRequest
+        contentType: application/json
+        schema: ${file(models/send-message-request.json)}
 
 provider:
   name: aws
@@ -54,6 +51,7 @@ provider:
     FRIEND_TABLE: friends-${self:provider.stage}
     ES_USERS_INDEX: 'users-index'
     ES_USERS_INDEX_TYPE: 'users'
+    ES_MESSAGE_INDEX_TYPE: 'message'
     JWKS_URL: https://uptodolist.auth0.com/.well-known/jwks.json
 
   iamRoleStatements:
@@ -186,9 +184,9 @@ functions:
           method: get
           path: friends
           cors: true
-          # authorizer: Auth
+          authorizer: Auth
           documentation:
-            summary: Get frienfs
+            summary: Get friends
             description: Gets all the friends for the current user along with the friendship
     iamRoleStatements:
       - Effect: Allow
@@ -236,8 +234,95 @@ functions:
         Resource:
           - '*'
 
+  # Send Message lambda function
+  SendMessage:
+    handler: src/lambda/http/sendMessage.handler
+    environment:
+      # since ES is a managed resource, we need the domain from the resource
+      ES_ENDPOINT: !GetAtt UserSearchElasticsearchStream.DomainEndpoint
+    events:
+      - http:
+          method: post
+          path: send-message
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Send message
+            description: Sends a message to the friend in the request from the current logged in user
+          request:
+            schema:
+              application/json: ${file(models/send-message-request.json)}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FRIEND_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}
+      # enabling tracing
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+          - xray:GetSamplingRules
+          - xray:GetSamplingTargets
+          - xray:GetSamplingStatisticSummaries
+        Resource:
+          - '*'
+
+  # Get conversation with a friend
+  GetMessages:
+    handler: src/lambda/http/getMessages.handler
+    environment:
+      # since ES is a managed resource, we need the domain from the resource
+      ES_ENDPOINT: !GetAtt UserSearchElasticsearchStream.DomainEndpoint
+    events:
+      - http:
+          method: get
+          path: friends/{friendId}/{from}/{to}
+          cors: true
+          authorizer: Auth
+          documentation:
+            summary: Get messages
+            description: Gets the conversation with a friend
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FRIEND_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}
+      # enabling tracing
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+          - xray:GetSamplingRules
+          - xray:GetSamplingTargets
+          - xray:GetSamplingStatisticSummaries
+        Resource:
+          - '*'
+
 resources:
   Resources:
+
+    # API Gateway default response configuration
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGatewayRestApi
 
     # Dynamodb table for storing users
     UsersTable:

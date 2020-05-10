@@ -9,13 +9,21 @@
     <p>Chat with <b>{{ messageStreamService.currentFriend.user.email }}</b></p>
   </div>
 
-  <div class="message-stream-body">
+  <div class="message-stream-body" #messageStreamBody>
 
     <!-- MESSAGE STREAM CONTENT -->
     <div class="message-stream-body-content">
-      <ng-container *ngFor="let message of messageStreamService.currentMessageStream.messages">
-        <div>{{ formatDate(message.timestamp) }} {{ message.senderUserId }} {{ message.content }}</div>
-      </ng-container>
+      <mat-list class="message-stream-body-content-list">
+        <ng-container *ngFor="let message of messageStreamService.currentMessageStream.messages">
+          <mat-list-item class="message-stream-body-content-list-item">
+            <div mat-line>
+              <span class="text-message-timestamp">{{ formatDate(message.timestamp) }}</span>
+              <span class="text-message-email">{{ getFriendEmail(message.senderUserId) }}</span>
+              <span class="text-message-content">{{ message.content }}</span>
+            </div>
+          </mat-list-item>
+        </ng-container>
+      </mat-list>
     </div>
   </div>
 

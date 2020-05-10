@@ -1,5 +1,6 @@
 import { ElasticsearchQueryHit } from "../models/ElasticsearchQueryHit";
 import { User } from "../models/User";
+import { TextMessage } from "../models/messages/Message";
 
 
 /**
@@ -21,7 +22,7 @@ export interface IStreamDataAccess {
      *
      * @param user the user to be indexed
      */
-    index(user: User): Promise<any>
+    indexUser(user: User): Promise<any>
 
     /**
      * returns the elastic search query results for the input query string
@@ -30,5 +31,22 @@ export interface IStreamDataAccess {
      * @return the search results if matches are found
      */
     search<T>(query: string): Promise<Array<ElasticsearchQueryHit<T>>>
+
+    /**
+     * indexes the provided message into the relationship stream
+     *
+     * @param message the message to be sent
+     */
+    sendMessage(message: TextMessage): Promise<any>;
+
+    /**
+     * fetches the conversation between the the input userId and the friendId for the specified time range
+     *
+     * @param userId current user id
+     * @param friendId the friend id
+     * @param fromTimestamp the starting date and time value (gte)
+     * @param toTimestamp the ending date and time value (lt)
+     */
+    getMessages<T>(userId: string, friendId: string, fromTimestamp: Date, toTimestamp: Date): Promise<Array<ElasticsearchQueryHit<T>>>
 
 }

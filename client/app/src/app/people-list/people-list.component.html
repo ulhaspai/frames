@@ -9,7 +9,7 @@
 
         <mat-icon class="material-icons pointer" *ngIf="!peoples.refreshing"
                   matTooltip="Refresh"
-                  (click)="peoples.getFriends()">refresh</mat-icon>
+                  (click)="peoples.refreshFriends()">refresh</mat-icon>
         <mat-progress-spinner *ngIf="peoples.refreshing" class="search-results-loading"
                               [diameter]="24"
                               [color]="'primary'"

@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MessageStreamService } from "./message-stream.service";
 import { Observable } from "rxjs";
 import { Auth0User } from "../models/auth-user";
 import { AuthService } from "../login/auth.service";
-import { Friend } from "../models/friend";
+import { PeopleListService } from "../people-list/people-list.service";
 
 @Component({
     selector: 'app-message-stream',
@@ -11,6 +11,8 @@ import { Friend } from "../models/friend";
     styleUrls: ['./message-stream.component.scss']
 })
 export class MessageStreamComponent implements OnInit {
+
+    @ViewChild('messageStreamBody') private scrollContainer: ElementRef;
 
     private auth0User$: Observable<Auth0User>;
     public auth0User: Auth0User;
@@ -30,14 +32,22 @@ export class MessageStreamComponent implements OnInit {
     userId: string;
 
     constructor(public auth: AuthService,
-                public messageStreamService: MessageStreamService) {
+                public messageStreamService: MessageStreamService,
+                public peopleList: PeopleListService) {
     }
 
     ngOnInit(): void {
+        this.messageStreamService.messageStreamUpdatedSubject$.subscribe(next => {
+            if(next) {
+                this.scrollToBottom();
+            }
+        });
+
         this.auth0User$ = this.auth.getUser();
         this.auth0User$.subscribe(next => {
             this.auth0User = next
         });
+
     }
 
     formatDate(isoDate: string): string {
@@ -45,6 +55,21 @@ export class MessageStreamComponent implements OnInit {
         let string = new Intl.DateTimeFormat('default', this.dateFormat).format(date);
         string += " " + new Intl.DateTimeFormat('default', this.timeFormat).format(date);
         return string;
+    }
+
+    getFriendEmail(id: string): string {
+        if (id === this.auth.currentAuth0User.sub) {
+            return this.auth.currentAuth0User.email;
+        } else {
+            const friend = this.messageStreamService.currentFriend;
+            return friend && friend.user ? friend.user.email : id;
+        }
+    }
+
+    scrollToBottom(): void {
+        try {
+            this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+        } catch(err) { }
     }
 
 }

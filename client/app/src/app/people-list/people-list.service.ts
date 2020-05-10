@@ -33,6 +33,7 @@ export class PeopleListService extends BaseService {
     }
 
     public async refreshFriends() {
+        this.refreshing = true;
         this.auth0User$.subscribe(next => {
             this.friends$ = from(UserApi.getFriends(this.auth0User.token)
                 .then((resolve) => {
@@ -63,6 +64,7 @@ export class PeopleListService extends BaseService {
     getFriend(userId: string): Friend {
         return JSON.parse(JSON.stringify(this.friendMap.get(userId)));
     }
+
     isRefreshing(): boolean {
         return this.refreshing;
     }

@@ -11,12 +11,12 @@ export enum MessageType {
 }
 
 export interface Message<T> {
+    id?: string;
     type: MessageType;
     content: T;
     timestamp: string;
     senderUserId: string;
     receiverUserId: string;
-    sent?: boolean;
 }
 
 export class Attachment {
@@ -31,7 +31,6 @@ export class TextMessage implements Message<string> {
     senderUserId: string;
     receiverUserId: string;
     timestamp: string;
-    sent?: boolean;
 }
 
 export class AttachmentMessage implements Message<Attachment> {
@@ -40,7 +39,6 @@ export class AttachmentMessage implements Message<Attachment> {
     senderUserId: string;
     receiverUserId: string;
     timestamp: string;
-    sent?: boolean;
 }
 
 export class MessageStream {

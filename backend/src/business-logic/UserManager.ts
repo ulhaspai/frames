@@ -9,6 +9,7 @@ import { UserSearchResult } from "../models/UserSearchResult";
 import { FriendManager } from "./FriendManager";
 import { Friendship } from "../models/Friendship";
 import { Friend } from "../models/Friend";
+import { Message, TextMessage } from "../models/messages/Message";
 
 const userDataAccess: IFramesDataAccess = new FramesDocumentClient()
 const elasticDataAccess: IStreamDataAccess = new ElasticsearchStreamClient()
@@ -51,8 +52,8 @@ export class UserManager {
      *
      * @param user the user to be indexed
      */
-    static async index(user: User): Promise<any> {
-        return elasticDataAccess.index(user)
+    static async indexUser(user: User): Promise<any> {
+        return elasticDataAccess.indexUser(user)
     }
 
     /**
@@ -113,7 +114,7 @@ export class UserManager {
      *
      * @param userId the user id of the user
      */
-    public static async getFriends(userId: string): Promise<Array<Friend>> {
+    static async getFriends(userId: string): Promise<Array<Friend>> {
         logger.info("fetching friends for userId = "  + userId)
         const friendships = await FriendManager.getFriendships(userId)
         if (friendships) {
@@ -130,5 +131,31 @@ export class UserManager {
 
         return Promise.resolve([])
     }
+
+    static async sendMessage(message: TextMessage): Promise<any> {
+        logger.info (`user ${message.senderUserId} sending message to ${message.receiverUserId}`)
+        return elasticDataAccess.sendMessage(message)
+    }
+
+    static async getMessages(userId: string, friendId: string, fromTimestamp: Date, toTimestamp: Date): Promise<Message<any>[]> {
+        logger.info(`getting conversation between ${userId} and ${friendId} from ${fromTimestamp} - ${toTimestamp}`)
+        const hits: Array<ElasticsearchQueryHit<Message<any>>> = await elasticDataAccess.getMessages(userId, friendId, fromTimestamp, toTimestamp)
+        return UserManager.mapAndSortElasticsearchHitToMessages(hits)
+    }
+
+    /**
+     * maps and sorts the elasticsearch query hit to messages and sorts in the order of timestamp
+     *
+     * @param items the items to be mapped and sorted
+     * @result all hits converted to message objects
+     */
+    private static async mapAndSortElasticsearchHitToMessages(items: ElasticsearchQueryHit<Message<any>>[]): Promise<Message<any>[]> {
+        return Promise.resolve(items.map(item => {
+            return {
+                ...item._source
+            }
+        }).sort((a: Message<any>, b: Message<any>) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()))
+    }
+
 
 }

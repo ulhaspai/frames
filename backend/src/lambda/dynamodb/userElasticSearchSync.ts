@@ -34,6 +34,6 @@ export const handler: DynamoDBStreamHandler = async (event: DynamoDBStreamEvent)
 
         // index the new item to elastic search
         logger.info('Adding record ' +  JSON.stringify(user))
-        await UserManager.index(user)
+        await UserManager.indexUser(user)
     }
 }

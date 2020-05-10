@@ -39,9 +39,6 @@
     width: 100%;
     height: 100%;
 
-    * {
-        border: 1px solid red;
-    }
     .message-stream-header {
         border-top: 1px solid $border-color;
         border-bottom: 1px solid $border-color;
@@ -60,6 +57,28 @@
 
         .message-stream-body-content {
             flex: 1 1 auto;
+
+            .message-stream-body-content {
+                flex: 1 1 auto;
+
+            }
+        }
+
+        .message-stream-body-content-list-item:hover {
+            background-color: $border-color;
+        }
+
+        .text-message-timestamp {
+            margin-right: 8px;
+        }
+
+        .text-message-email {
+            margin-right: 12px;
+            text-decoration: underline;
+        }
+
+        .text-message-content {
+
         }
 
         .message-stream-body-input {

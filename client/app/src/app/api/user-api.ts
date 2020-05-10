@@ -3,6 +3,7 @@ import { apiEndpoint } from "./api.endpoint";
 import Axios from "axios";
 import { UserSearchResult } from "../models/user-search-result";
 import { Friend } from "../models/friend";
+import { Message, TextMessage } from "../message-stream/message-stream.models";
 
 /**
  * User service for performing actions on user data
@@ -71,11 +72,47 @@ export class UserApi {
      * gets all the friends for the current logged in user
      *
      * @param idToken authorization token
-     * @param friendId the user to be added as friend
      */
     public static async getFriends(idToken: string): Promise<Friend[]> {
         console.log('Getting friends : ')
         const response = await Axios.get(`${apiEndpoint}/friends`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.data.items
+    }
+
+    /**
+     * sends a text message to a friend
+     *
+     * @param idToken authorization token
+     * @param message the message to be sent
+     */
+    public static async sendTextMessage(idToken: string, message: TextMessage): Promise<boolean> {
+        console.log('sending message : ', message)
+        const response = await Axios.post(`${apiEndpoint}/send-message`, message, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.status === 200
+    }
+
+    /**
+     * fetches the conversation with a friend
+     *
+     * @param idToken authorization token
+     * @param friendId the friend id
+     * @param from starting value of time range (inclusive, gte)
+     * @param to ending value of time range (exclusive, lt)
+     */
+    public static async getMessages(idToken: string, friendId: string, from: Date, to: Date): Promise<Message<any>[]> {
+        console.log(`fetching messages with ${friendId}`);
+        const encodedFriendId = encodeURIComponent(friendId)
+        const response = await Axios.get(`${apiEndpoint}/friends/${encodedFriendId}/${from.toISOString()}/${to.toISOString()}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${idToken}`

@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { Message, MessageStream, MessageType } from "./message-stream.models";
+import { Message, MessageStream, MessageType, TextMessage } from "./message-stream.models";
 import { Friend } from "../models/friend";
 import { BehaviorSubject, Subject } from "rxjs";
 import { AuthService } from "../login/auth.service";
 import { BaseService } from "../base-service";
 import { PeopleListService } from "../people-list/people-list.service";
-import { FormControl } from "@angular/forms";
+import { UserApi } from "../api/user-api";
 
 
 /**
@@ -26,28 +26,49 @@ export class MessageStreamService extends BaseService {
     currentFriend: Friend = null;
     currentFriendSubject$: Subject<Friend> = new BehaviorSubject<Friend>(null);
 
+    // message stream updated subject
+    messageStreamUpdatedSubject$: Subject<boolean> = new BehaviorSubject(null);
+
     constructor(private auth: AuthService,
                 private peoples: PeopleListService) {
         super(auth);
         this.messageStreams = new Map()
     }
 
-    refreshStream(userId: string) {
-
+    async refreshStream() : Promise<Message<any>[]> {
+        const to = new Date();
+        const from = new Date(to.getTime() - 86400000);
+        const messages = await UserApi.getMessages(this.auth0User.token, this.currentFriend.user.userId, from, to)
+        // console.log("Messages:::", messages);
+        this.addMessagesToMessageStream(this.currentFriend.user.userId, messages);
+        return Promise.resolve(messages);
     }
 
-    sendTextMessage(text: string) {
-        this.addToMessageStream(this.currentFriend.user.userId, {
+    async sendTextMessage(text: string) : Promise<boolean> {
+        const message: TextMessage = {
             type: MessageType.TEXT,
             content: text,
             senderUserId: this.auth.currentAuth0User.sub,
+            receiverUserId: this.currentFriend.user.userId,
             timestamp: new Date().toISOString()
-        })
+        };
+        this.addMessageToMessageStream(this.currentFriend.user.userId, message)
+        const sent = await UserApi.sendTextMessage(this.auth0User.token, message)
+        message.sent = sent
+
+        return Promise.resolve(sent);
     }
 
-    private addToMessageStream<S extends Message<any>>(userId: string, message: S) {
+    private addMessageToMessageStream<S extends Message<any>>(userId: string, message: S) {
         let stream = this.getOrCreateCurrentStream(userId);
         stream.messages.push(message)
+    }
+
+    private addMessagesToMessageStream<S extends Message<any>>(userId: string, messages: S[]) {
+        let stream = this.getOrCreateCurrentStream(userId);
+        stream.messages.splice(0, stream.messages.length);
+        messages.forEach(message => stream.messages.push(message))
+        this.messageStreamUpdatedSubject$.next(true)
     }
 
     private getOrCreateCurrentStream(userId: string): MessageStream {
@@ -60,14 +81,12 @@ export class MessageStreamService extends BaseService {
         }
         return stream;
     }
+
     chatWithFriend(friend: Friend): void {
         this.currentFriend = friend;
         this.currentMessageStream = this.getOrCreateCurrentStream(friend.user.userId);
         this.currentFriendSubject$.next(friend);
-
-        for (let i=0; i< 5; i++) {
-            this.sendTextMessage("Hello, " + friend.user.email + "!");
-        }
+        this.refreshStream();
     }
 
 }
