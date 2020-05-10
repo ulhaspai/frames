@@ -1,6 +1,6 @@
 import { ElasticsearchQueryHit } from "../models/ElasticsearchQueryHit";
 import { User } from "../models/User";
-import { TextMessage } from "../models/messages/Message";
+import { AttachmentMessage, TextMessage } from "../models/messages/Message";
 
 
 /**
@@ -35,9 +35,18 @@ export interface IStreamDataAccess {
     /**
      * indexes the provided message into the relationship stream
      *
+     * @param indexId the index id of the message
      * @param message the message to be sent
      */
-    sendMessage(message: TextMessage): Promise<any>;
+    sendMessage(indexId: string, message: TextMessage): Promise<any>;
+
+    /**
+     * indexes the attachment mexssage into the relationship stream
+     *
+     * @param indexId the index id of the message
+     * @param message the message to be sent
+     */
+    sendFile(indexId: string, message: AttachmentMessage): Promise<any>
 
     /**
      * fetches the conversation between the the input userId and the friendId for the specified time range

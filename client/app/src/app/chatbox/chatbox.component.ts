@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from "@angular/forms";
 import { MessageStreamService } from "../message-stream/message-stream.service";
+import { MatDialog } from "@angular/material/dialog";
+import { FileUploadDialogComponent } from "./file-upload-dialog/file-upload-dialog.component";
 
 @Component({
     selector: 'app-chatbox',
@@ -12,7 +14,8 @@ export class ChatboxComponent implements OnInit {
     messageInput: FormControl;
 
     constructor(private fb: FormBuilder,
-                private messageStream: MessageStreamService) {
+                private messageStream: MessageStreamService,
+                public dialog: MatDialog) {
     }
 
     ngOnInit(): void {
@@ -30,6 +33,13 @@ export class ChatboxComponent implements OnInit {
             this.messageInput.setValue("");
             this.messageStream.sendTextMessage(text);
         }
+    }
+
+    openFileUploadDialog(): void {
+        this.dialog.open(FileUploadDialogComponent, {
+            minWidth: '800px',
+            data: {}
+        });
     }
 
 }

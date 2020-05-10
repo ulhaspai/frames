@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { Auth0User } from "../models/auth-user";
 import { AuthService } from "../login/auth.service";
 import { PeopleListService } from "../people-list/people-list.service";
+import { AttachmentMessage, Message, MessageType } from "./message-stream.models";
 
 @Component({
     selector: 'app-message-stream',
@@ -70,6 +71,14 @@ export class MessageStreamComponent implements OnInit {
         try {
             this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
         } catch(err) { }
+    }
+
+    isAttachment(message: Message<string>): boolean {
+        return message.type === MessageType.ATTACHMENT
+    }
+
+    getFileUrl(message: any): string {
+        return message && message.file ? message.file.url : '';
     }
 
 }

@@ -33,9 +33,10 @@ export class TextMessage implements Message<string> {
     timestamp: string;
 }
 
-export class AttachmentMessage implements Message<Attachment> {
+export class AttachmentMessage implements Message<string> {
     type = MessageType.ATTACHMENT;
-    content: Attachment;
+    content: string;
+    file: Attachment;
     senderUserId: string;
     receiverUserId: string;
     timestamp: string;

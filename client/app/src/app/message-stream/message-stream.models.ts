@@ -1,8 +1,7 @@
 
 export enum AttachmentType {
     TEXT,
-    IMAGE,
-    FILE
+    IMAGE
 }
 
 export enum MessageType {
@@ -26,7 +25,7 @@ export class Attachment {
 }
 
 export class TextMessage implements Message<string> {
-    type = MessageType.TEXT;
+    readonly type = MessageType.TEXT;
     content: string;
     senderUserId: string;
     receiverUserId: string;
@@ -34,9 +33,10 @@ export class TextMessage implements Message<string> {
     sent?: boolean;
 }
 
-export class AttachmentMessage implements Message<Attachment> {
-    type = MessageType.ATTACHMENT;
-    content: Attachment;
+export class AttachmentMessage implements Message<string> {
+    readonly type = MessageType.ATTACHMENT;
+    content: string;
+    file: Attachment;
     senderUserId: string;
     receiverUserId: string;
     timestamp: string;
@@ -45,4 +45,9 @@ export class AttachmentMessage implements Message<Attachment> {
 
 export class MessageStream {
     messages: Array<Message<any>>;
+}
+
+export class SendFileResponse {
+    message: Message<any>;
+    uploadUrl: string;
 }

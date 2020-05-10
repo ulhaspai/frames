@@ -29,6 +29,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChatboxComponent } from './chatbox/chatbox.component';
 import { MessageStreamComponent } from './message-stream/message-stream.component';
+import { FileUploadDialogComponent } from './chatbox/file-upload-dialog/file-upload-dialog.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { MessageStreamComponent } from './message-stream/message-stream.componen
         SearchResultDialogComponent,
         ChatboxComponent,
         MessageStreamComponent,
+        FileUploadDialogComponent,
     ],
     imports: [
         BrowserModule,

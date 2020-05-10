@@ -9,10 +9,15 @@ import { UserSearchResult } from "../models/UserSearchResult";
 import { FriendManager } from "./FriendManager";
 import { Friendship } from "../models/Friendship";
 import { Friend } from "../models/Friend";
-import { Message, TextMessage } from "../models/messages/Message";
+import { AttachmentMessage, Message, TextMessage } from "../models/messages/Message";
+import * as UUID from 'uuid';
+import { S3Client } from "../data-layer/S3Client";
 
 const userDataAccess: IFramesDataAccess = new FramesDocumentClient()
 const elasticDataAccess: IStreamDataAccess = new ElasticsearchStreamClient()
+const s3Client: S3Client = new S3Client()
+
+const BUCKET_NAME = process.env.S3_BUCKET_NAME
 
 const logger = createLogger('UserManager')
 
@@ -22,6 +27,8 @@ const logger = createLogger('UserManager')
  * @author: Ulhas Pai
  */
 export class UserManager {
+
+    // private static readonly REGEX = /(?:\.([^.]+))?$/;
 
     /**
      * @param user the user to be created
@@ -132,9 +139,31 @@ export class UserManager {
         return Promise.resolve([])
     }
 
-    static async sendMessage(message: TextMessage): Promise<any> {
+    /**
+     * @param message the text message to be sent
+     */
+    static async sendTextMessage(message: TextMessage): Promise<any> {
         logger.info (`user ${message.senderUserId} sending message to ${message.receiverUserId}`)
-        return elasticDataAccess.sendMessage(message)
+        const indexId = UUID.v4()
+        return elasticDataAccess.sendMessage(indexId, message)
+    }
+
+
+    /**
+     * @param message the attachment message to be sent
+     * @return the upload url for the attachment
+     */
+    static async sendAttachmentMessage(message: AttachmentMessage): Promise<string> {
+        logger.info (`user ${message.senderUserId} sending message to ${message.receiverUserId}`)
+        const indexId = UUID.v4()
+        // const ext = REGEX.exec(message.file.name)[1];
+        message.file.url = `https://${BUCKET_NAME}.s3.amazonaws.com/${indexId}`
+        await elasticDataAccess.sendFile(indexId, message)
+        return this.getUploadUrl(indexId)
+    }
+
+    private static async getUploadUrl(indexId: string): Promise<string> {
+        return Promise.resolve(s3Client.getSignedPutUrl(indexId))
     }
 
     static async getMessages(userId: string, friendId: string, fromTimestamp: Date, toTimestamp: Date): Promise<Message<any>[]> {

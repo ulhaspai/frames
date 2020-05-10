@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { LambdaUtils } from '../LambdaUtils'
 import { createLogger } from '../../utils/logger'
 import { FriendManager } from "../../business-logic/FriendManager";
-import { TextMessage } from "../../models/messages/Message";
+import { AttachmentMessage } from "../../models/messages/Message";
 import { UserManager } from "../../business-logic/UserManager";
 
 
@@ -20,7 +20,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     // grab the user id from the JWT payload
     const userId: string = LambdaUtils.getUserId(event)
-    const message: TextMessage = JSON.parse(event.body)
+    const message: AttachmentMessage = JSON.parse(event.body)
 
 
     // | (pipes) are a problem, so client will encode and send the friendId
@@ -30,8 +30,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         message.timestamp = new Date().toISOString()
 
         try {
-            const result = await UserManager.sendTextMessage(message)
-            logger.info("index result = " + JSON.stringify(result))
+            const result = await UserManager.sendAttachmentMessage(message)
+            logger.info("upload url = " + JSON.stringify(result))
             return {
                 statusCode: 200,
                 headers: {
@@ -39,7 +39,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
                     'Access-Control-Allow-Credentials': true
                 },
                 body: JSON.stringify({
-                    message: message
+                    message: message,
+                    uploadUrl: result
                 })
             }
         } catch (err) {

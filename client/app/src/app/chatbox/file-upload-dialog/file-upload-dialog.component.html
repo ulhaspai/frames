@@ -1,0 +1,15 @@
+<form>
+  <input [formControl]="fileInput" #FileSelectInput type="file" class="file-upload-input" accept="image/png, image/jpeg">
+
+  <button class="select-file-button" mat-raised-button color="primary" (click)="openFilesSelectDialog()">
+    <mat-icon>add_box</mat-icon>
+    Select file
+  </button>
+
+  <div class="file-details">
+    <p *ngIf="getFileName()">File name: {{ getFileName() }}</p>
+    <p *ngIf="getFileSize()">File size: {{ getFileSize() }}</p>
+  </div>
+
+  <button class="send-button" [formControl]="sendButton" mat-raised-button color="primary" (click)="sendFile()">Send file</button>
+</form>

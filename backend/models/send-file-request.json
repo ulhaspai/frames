@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "group",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "number"
+    },
+    "content": {
+      "type": "string"
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required" : ["type", "name"]
+    },
+    "senderUserId": {
+      "type": "string"
+    },
+    "receiverUserId": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "file",
+    "senderUserId",
+    "receiverUserId",
+    "timestamp"
+  ],
+  "additionalProperties": false
+}

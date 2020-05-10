@@ -10,16 +10,17 @@
     <form class="message-form">
 
       <mat-form-field appearance="fill" class="form-field">
-        <mat-label>Search</mat-label>
+        <mat-label>Message</mat-label>
         <input type="text"
                matInput
-               placeholder="type email address"
+               placeholder="enter message to send here ..."
                [formControl]="messageInput"
                (keyup.enter)="sendMessage()">
         <div matSuffix class="actions">
-          <mat-icon class="material-icons action">videocam</mat-icon>
-          <mat-icon class="material-icons action">attach_file</mat-icon>
+          <mat-icon class="material-icons action" *ngIf="messageInput.enabled">videocam</mat-icon>
+          <mat-icon class="material-icons action" *ngIf="messageInput.enabled" (click)="openFileUploadDialog()">attach_file</mat-icon>
         </div>
+        <mat-hint *ngIf="messageInput.enabled"><mat-icon>info</mat-icon> press enter to send message</mat-hint>
       </mat-form-field>
 
     </form>

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Message, MessageStream, MessageType, TextMessage } from "./message-stream.models";
+import { AttachmentMessage, AttachmentType, Message, MessageStream, MessageType, SendFileResponse, TextMessage } from "./message-stream.models";
 import { Friend } from "../models/friend";
 import { BehaviorSubject, Subject } from "rxjs";
 import { AuthService } from "../login/auth.service";
@@ -52,16 +52,39 @@ export class MessageStreamService extends BaseService {
             receiverUserId: this.currentFriend.user.userId,
             timestamp: new Date().toISOString()
         };
-        this.addMessageToMessageStream(this.currentFriend.user.userId, message)
-        const sent = await UserApi.sendTextMessage(this.auth0User.token, message)
-        message.sent = sent
 
-        return Promise.resolve(sent);
+        const sentMessage = await UserApi.sendTextMessage(this.auth0User.token, message)
+        message.sent = true
+        this.addMessageToMessageStream(this.currentFriend.user.userId, sentMessage)
+
+        return Promise.resolve(true);
+    }
+
+    async sendFile(text: string, file: File): Promise<boolean> {
+        const message: AttachmentMessage = {
+            type: MessageType.ATTACHMENT,
+            content: "",
+            file: {
+                type: AttachmentType.IMAGE,
+                name: file.name,
+                url: ""
+            },
+            senderUserId: this.auth.currentAuth0User.sub,
+            receiverUserId: this.currentFriend.user.userId,
+            timestamp: new Date().toISOString()
+        }
+        const response : SendFileResponse = await UserApi.sendAttachmentMessage(this.auth.currentAuth0User.token, message);
+        response.message.sent = true
+        await UserApi.uploadFile(response.uploadUrl, file)
+
+        this.addMessageToMessageStream(this.currentFriend.user.userId, response.message)
+        return Promise.resolve(true);
     }
 
     private addMessageToMessageStream<S extends Message<any>>(userId: string, message: S) {
         let stream = this.getOrCreateCurrentStream(userId);
         stream.messages.push(message)
+        this.messageStreamUpdatedSubject$.next(true);
     }
 
     private addMessagesToMessageStream<S extends Message<any>>(userId: string, messages: S[]) {

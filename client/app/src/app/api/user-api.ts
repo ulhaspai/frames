@@ -3,7 +3,7 @@ import { apiEndpoint } from "./api.endpoint";
 import Axios from "axios";
 import { UserSearchResult } from "../models/user-search-result";
 import { Friend } from "../models/friend";
-import { Message, TextMessage } from "../message-stream/message-stream.models";
+import { AttachmentMessage, Message, SendFileResponse, TextMessage } from "../message-stream/message-stream.models";
 
 /**
  * User service for performing actions on user data
@@ -85,23 +85,6 @@ export class UserApi {
     }
 
     /**
-     * sends a text message to a friend
-     *
-     * @param idToken authorization token
-     * @param message the message to be sent
-     */
-    public static async sendTextMessage(idToken: string, message: TextMessage): Promise<boolean> {
-        console.log('sending message : ', message)
-        const response = await Axios.post(`${apiEndpoint}/send-message`, message, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`
-            }
-        })
-        return response.status === 200
-    }
-
-    /**
      * fetches the conversation with a friend
      *
      * @param idToken authorization token
@@ -119,6 +102,45 @@ export class UserApi {
             }
         })
         return response.data.items
+    }
+
+    /**
+     * sends a text message to a friend
+     *
+     * @param idToken authorization token
+     * @param message the message to be sent
+     */
+    public static async sendTextMessage(idToken: string, message: TextMessage): Promise<Message<string>> {
+        console.log('sending message : ', message)
+        const response = await Axios.post(`${apiEndpoint}/send-message`, message, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.data.message
+    }
+
+    /**
+     * sends an attachment message to a friend
+     *
+     * @param idToken authorization token
+     * @param message the message to be sent
+     */
+    public static async sendAttachmentMessage(idToken: string, message: AttachmentMessage): Promise<SendFileResponse> {
+        console.log('sending message : ', message)
+        const response = await Axios.post(`${apiEndpoint}/send-file`, message, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        })
+        return response.data
+    }
+
+    public static async uploadFile(uploadUrl: string, file: File): Promise<void> {
+        console.log('uploading file : ', file)
+        await Axios.put(uploadUrl, await file.arrayBuffer())
     }
 
 }

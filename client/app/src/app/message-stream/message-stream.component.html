@@ -15,11 +15,12 @@
     <div class="message-stream-body-content">
       <mat-list class="message-stream-body-content-list">
         <ng-container *ngFor="let message of messageStreamService.currentMessageStream.messages">
-          <mat-list-item class="message-stream-body-content-list-item">
+          <mat-list-item [ngClass]="{'message-stream-body-content-list-item' : !isAttachment(message), 'message-stream-body-content-list-item-file' : isAttachment(message) }">
             <div mat-line>
               <span class="text-message-timestamp">{{ formatDate(message.timestamp) }}</span>
               <span class="text-message-email">{{ getFriendEmail(message.senderUserId) }}</span>
               <span class="text-message-content">{{ message.content }}</span>
+              <div class="message-file" *ngIf="isAttachment(message)"><img src="{{ getFileUrl(message) }}" width="300"></div>
             </div>
           </mat-list-item>
         </ng-container>

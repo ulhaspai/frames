@@ -3,10 +3,9 @@ import { ElasticsearchQueryHit } from "../models/ElasticsearchQueryHit";
 import * as elasticsearch from "elasticsearch";
 import * as httpAwsEs from 'http-aws-es'
 import { User } from "../models/User";
-import { TextMessage } from "../models/messages/Message";
+import { AttachmentMessage, TextMessage } from "../models/messages/Message";
 import { MessageHelper } from "../business-logic/MessageHelper";
 import { createLogger } from "../utils/logger";
-import * as UUID from 'uuid';
 
 const esHost = process.env.ES_ENDPOINT
 const usersIndex = process.env.ES_USERS_INDEX
@@ -48,9 +47,19 @@ export class ElasticsearchStreamClient implements IStreamDataAccess {
         })
     }
 
-    async sendMessage(message: TextMessage): Promise<any> {
+    async sendMessage(indexId: string, message: TextMessage): Promise<any> {
         const indexName = MessageHelper.getChatStreamName(message.senderUserId, message.receiverUserId)
-        const indexId = UUID.v4()
+        logger.info("sending message to index id = " + indexId + " index name = " + indexName)
+        return this.es.index({
+            index: indexName,
+            type: messageIndexType,
+            id: indexId,
+            body: message
+        })
+    }
+
+    async sendFile(indexId: string, message: AttachmentMessage): Promise<any> {
+        const indexName = MessageHelper.getChatStreamName(message.senderUserId, message.receiverUserId)
         logger.info("sending message to index id = " + indexId + " index name = " + indexName)
         return this.es.index({
             index: indexName,
